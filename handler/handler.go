@@ -3,6 +3,7 @@ package handler
 import (
 	"goly/model"
 	util "goly/utils"
+	"strconv"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -47,4 +48,42 @@ func CreateGoly(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).JSON(goly)
+
+}
+
+func UpdateGoly(c *fiber.Ctx) error {
+	c.Accepts("application/json")
+
+	var goly model.Goly
+
+	err := c.BodyParser(&goly)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "could not parse json " + err.Error(),
+		})
+	}
+
+	golyID, err := strconv.Atoi(c.Params("id"))
+	existing_goly, err := model.GetGoly(golyID)
+
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "could not goly with given ID" + err.Error(),
+		})
+	}
+
+	existing_goly.Redirect = goly.Redirect
+	if goly.Random {
+		existing_goly.Goly = util.RandomURL(10)
+	}
+
+	err = model.UpdateGoly(existing_goly)
+
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "could not update goly link in DB " + err.Error(),
+		})
+	}
+	return c.Status(fiber.StatusOK).JSON(goly)
+
 }

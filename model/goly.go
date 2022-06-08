@@ -35,8 +35,25 @@ func CreateGoly(goly Goly) error {
 	return tx.Error
 }
 
+func GetGoly(id int) (Goly, error) {
+	var goly Goly
+
+	tx := db.Where("id = ?", id).First(&goly)
+
+	if tx.Error != nil {
+		return Goly{}, tx.Error
+	}
+
+	return goly, nil
+}
+
 func FindByGolyUrl(url string) (Goly, error) {
 	var goly Goly
 	tx := db.Where("goly = ?", url).First(&goly)
 	return goly, tx.Error
+}
+
+func UpdateGoly(goly Goly) error {
+	tx := db.Save(&goly)
+	return tx.Error
 }

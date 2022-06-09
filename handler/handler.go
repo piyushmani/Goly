@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"goly/model"
 	util "goly/utils"
 	"strconv"
@@ -17,11 +18,11 @@ func Redirect(c *fiber.Ctx) error {
 		})
 	}
 	// grab any stats you want...
-	// goly.Clicked += 1
-	// err = model.UpdateGoly(goly)
-	// if err != nil {
-	// 	fmt.Printf("error updating: %v\n", err)
-	// }
+	goly.Clicked += 1
+	err = model.UpdateGoly(goly)
+	if err != nil {
+		fmt.Printf("error updating: %v\n", err)
+	}
 
 	return c.Redirect(goly.Redirect, fiber.StatusTemporaryRedirect)
 }
@@ -35,11 +36,7 @@ func CreateGoly(c *fiber.Ctx) error {
 			"message": "error parsing JSON " + err.Error(),
 		})
 	}
-
-	if goly.Random {
-		goly.Goly = util.RandomURL(8)
-	}
-
+    goly.Goly = util.GenerateShortUrl(goly.Redirect)
 	err = model.CreateGoly(goly)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -73,15 +70,27 @@ func UpdateGoly(c *fiber.Ctx) error {
 	}
 
 	existing_goly.Redirect = goly.Redirect
-	if goly.Random {
-		existing_goly.Goly = util.RandomURL(10)
-	}
+	// if goly.Random {
+	// 	existing_goly.Goly = util.RandomURL(10)
+	// }
 
 	err = model.UpdateGoly(existing_goly)
 
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "could not update goly link in DB " + err.Error(),
+		})
+	}
+	return c.Status(fiber.StatusOK).JSON(goly)
+
+}
+
+func GetGoly(c *fiber.Ctx) error{
+	golyID, _ := strconv.Atoi(c.Params("id"))
+	goly , err := model.GetGoly(golyID)
+	if err !=nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "could not goly with given ID" + err.Error(),
 		})
 	}
 	return c.Status(fiber.StatusOK).JSON(goly)

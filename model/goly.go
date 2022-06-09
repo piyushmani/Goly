@@ -14,7 +14,6 @@ type Goly struct {
 	Redirect string `json:"redirect" gorm:"not null"`
 	Goly     string `json:"goly" gorm:"unique;not null"`
 	Clicked  uint64 `json:"clicked"`
-	Random   bool   `json:"random"`
 }
 
 func Setup() {

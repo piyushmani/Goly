@@ -1,15 +1,34 @@
 package util
 
-import "math/rand"
+import (
+	"crypto/sha256"
+	"fmt"
+	"math/big"
+	"os"
 
-var runes = []rune("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+	"github.com/itchyny/base58-go"
+)
 
-func RandomURL(size int) string {
-	str := make([]rune, size)
 
-	for i := range str {
-		str[i] = runes[rand.Intn(len(runes))]
+func GenerateShortUrl(url string ) string {
+	urlHashBytes := sha256Of(url)
+	generatedNumber := new(big.Int).SetBytes(urlHashBytes).Uint64()
+	finalString := base58Encoded([]byte(fmt.Sprintf("%d", generatedNumber)))
+	return finalString[:8]
+}
+
+func sha256Of(input string) []byte {
+	algorithm := sha256.New()
+	algorithm.Write([]byte(input))
+	return algorithm.Sum(nil)
+}
+
+func base58Encoded(bytes []byte) string {
+	encoding := base58.BitcoinEncoding
+	encoded, err := encoding.Encode(bytes)
+	if err != nil {
+		fmt.Println(err.Error())
+		os.Exit(1)
 	}
-
-	return string(str)
+	return string(encoded)
 }

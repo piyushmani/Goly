@@ -17,8 +17,9 @@ func Redirect(c *fiber.Ctx) error {
 			"message": "could not find goly in DB " + err.Error(),
 		})
 	}
-	// grab any stats you want...
+	// update click count
 	goly.Clicked += 1
+
 	err = model.UpdateGoly(goly)
 	if err != nil {
 		fmt.Printf("error updating: %v\n", err)

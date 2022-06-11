@@ -71,9 +71,7 @@ func UpdateGoly(c *fiber.Ctx) error {
 	}
 
 	existing_goly.Redirect = goly.Redirect
-	// if goly.Random {
-	// 	existing_goly.Goly = util.RandomURL(10)
-	// }
+	
 
 	err = model.UpdateGoly(existing_goly)
 
@@ -91,9 +89,32 @@ func GetGoly(c *fiber.Ctx) error{
 	goly , err := model.GetGoly(golyID)
 	if err !=nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": "could not goly with given ID" + err.Error(),
+			"message": "could not find goly with given ID " + err.Error(),
 		})
 	}
 	return c.Status(fiber.StatusOK).JSON(goly)
+
+}
+
+func DeleteGoly(c *fiber.Ctx ) error {
+	golyID , _ := strconv.Atoi(c.Params("id"))
+	goly, err := model.GetGoly(golyID)
+	if err !=nil {
+		if err !=nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"message": "could not find goly with given ID" + err.Error(),
+			})
+		}
+	}
+	deleteErr := model.DeleteGoly(goly)
+	if deleteErr != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "could not  delete goly with given ID" + err.Error(),
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "success",
+	})
 
 }

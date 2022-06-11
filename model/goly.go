@@ -56,3 +56,8 @@ func UpdateGoly(goly Goly) error {
 	tx := db.Save(&goly)
 	return tx.Error
 }
+
+func DeleteGoly(goly Goly) error {
+	tx:= db.Delete(&goly)
+	return tx.Error
+}

@@ -13,6 +13,7 @@ func setupRoutes(app *fiber.App) {
 	app.Get("/r/:redirect", handler.Redirect)
 	app.Patch("/goly/:id", handler.UpdateGoly)
 	app.Get("/goly/:id", handler.GetGoly)
+	app.Delete("/goly/:id", handler.DeleteGoly)
 }
 
 func main() {

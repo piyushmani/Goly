@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from "vue";
+import PulseLoader from 'vue-spinner/src/PulseLoader.vue'
 
 
 const golyInput = ref("") 
@@ -81,11 +82,12 @@ async function onSubmit(event) {
                 <h1 class="relative mb-4 text-3xl font-black leading-tight text-gray-900 sm:text-6xl xl:mb-8">
                     Short URLS`s are Great Thing</h1>
                 <div>
+                    
                     <form @submit.prevent="onSubmit" class="m-4 flex">
                         <input v-model="golyInput"  class="rounded-l-lg p-4 border-t mr-0 border-b border-l text-gray-800 border-gray-200 bg-white"
                             placeholder="Long URL" />
                         <button
-                            class="px-8 rounded-r-lg bg-indigo-600  text-base font-bold text-white  font-bold p-4 uppercase  border-t border-b border-r">Shorten</button>
+                            class="px-8 rounded-r-lg bg-indigo-600  text-base font-bold text-white  font-bold p-4 uppercase  border-t border-b border-r">Shorten <pulse-loader :loading="true"></pulse-loader></button>
                     </form>
                 </div>
                 <!-- <a href="#_"
@@ -97,5 +99,6 @@ async function onSubmit(event) {
             
         </div>
     </div>
+    
 </template>
 
